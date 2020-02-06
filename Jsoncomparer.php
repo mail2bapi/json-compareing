@@ -25,9 +25,11 @@ class Jsoncomparer
      * Compare just two files and save json file in assign output directory (default: output/)
      * @param string $originalFile
      * @param string $newFile
+     * @param boolean $fileOutput
      * @throws Exception
+     * @return mixed
      */
-    public function compareFile($originalFile='', $newFile=''){
+    public function compareFile($originalFile='', $newFile='', $fileOutput=false){
         if ((file_exists($originalFile)) && (file_exists($newFile))) {
             // Both File exist
 
@@ -39,35 +41,38 @@ class Jsoncomparer
             $comparedContent = $this->comparer->getdiff($originalContent, $newContent);
 
             // Saving compared data into a new file
-            $newFileName = $this->outputDirectory.'/'.basename($originalFile, '.json').'_compared.json';
-            //file_put_contents($newFileName, $comparedContent);
+            if($fileOutput){
+                $newFileName = $this->outputDirectory.'/'.basename($originalFile, '.json').'_compared.json';
+                file_put_contents($newFileName, $comparedContent);
+            }
 
-            $json2array = json_decode($comparedContent, true);
-            print_r($json2array);
+            return json_decode($comparedContent, true);
 
-            return $json2array;
         } else {
             throw new Exception("File ".$originalFile." or file ".$newFile." does not exist");
         }
     }
 
+    /**
+     * @param $originalContent
+     * @param $newContent
+     * @return mixed
+     */
     public function compareObject($originalContent, $newContent){
         // Comparing the files
         $comparedContent = $this->comparer->getdiff($newContent, $originalContent);
-
-        $json2array = json_decode($comparedContent, true);
-        print_r($json2array);
-
-        return $json2array;
+        return json_decode($comparedContent, true);
     }
 
     /**
      * Compare all the files present in two directories and save json files in assign output directory (default: output/)
      * @param string $originalDir
      * @param string $newDir
+     * @param boolean $fileOutput
      * @throws Exception
+     * @return mixed
      */
-    public function compareDirectories($originalDir='', $newDir=''){
+    public function compareDirectories($originalDir='', $newDir='', $fileOutput=false){
         if ((is_dir($originalDir)) && (is_dir($newDir))) {
             // Both Directory exist
 
@@ -86,7 +91,7 @@ class Jsoncomparer
                 // Check same file exist in new directory
                 if (in_array($orgFile, $newDirFiles)) {
                     // Found, let's compare
-                    $this->compare($originalDir.'/'.$orgFile, $newDir.'/'.$orgFile);
+                    $this->compareFile($originalDir.'/'.$orgFile, $newDir.'/'.$orgFile, $fileOutput);
                 }
             }
         } else {
