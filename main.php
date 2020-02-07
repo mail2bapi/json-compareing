@@ -13,7 +13,7 @@ $jc = new Jsoncomparer(["debug" => true, "returntype" => "jsonstring"]);
 $jc->setOutputDirectory('some-dir2');
 
 // Compare just two files
-//$jc->compareFile('new_data/data1.json', 'org_data/data1.json');
+$jc->compareFile('new_data/data1.json', 'org_data/data1.json');
 
 // Compare just two json object
 $json1 = file_get_contents('new_data/data1.json');
@@ -22,4 +22,4 @@ $json2 = file_get_contents('org_data/data1.json');
 $jc->compareObject($json1, $json2);
 
 // Compare directories
-//$jc->compareDirectories('org_data', 'new_data');
+$jc->compareDirectories('org_data', 'new_data');
